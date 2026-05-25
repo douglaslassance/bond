@@ -29,6 +29,10 @@ export async function toggleLike(userId: string, placeId: string): Promise<boole
 export async function mergeLikes(userId: string, placeIds: string[]): Promise<number> {
 	if (placeIds.length === 0) return 0;
 	const rows = placeIds.map((placeId) => ({ userId, placeId }));
-	const result = await db.insert(like).values(rows).onConflictDoNothing().returning({ id: like.id });
+	const result = await db
+		.insert(like)
+		.values(rows)
+		.onConflictDoNothing()
+		.returning({ id: like.id });
 	return result.length;
 }

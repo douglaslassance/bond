@@ -22,7 +22,10 @@ export const actions: Actions = {
 			await auth.api.signInEmail({ body: { email, password } });
 		} catch (error) {
 			if (error instanceof APIError) {
-				return fail(400, { email, message: error.message || 'Sign-in failed.' });
+				return fail(400, {
+					email,
+					message: error.message || 'Sign-in failed.'
+				});
 			}
 			return fail(500, { email, message: 'Unexpected error. Try again.' });
 		}
