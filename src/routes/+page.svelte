@@ -1,40 +1,90 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { ArrowRight, Sparkles, Users } from '@lucide/svelte';
+	import DashboardHeader from '$lib/components/dashboard-header.svelte';
+	import LocationPrompt from '$lib/components/location-prompt.svelte';
+	import MatchedPeopleRail from '$lib/components/matched-people-rail.svelte';
+	import CategoryRail from '$lib/components/category-rail.svelte';
+	import EventsRail from '$lib/components/events-rail.svelte';
+
+	let { data } = $props();
 </script>
 
-<section class="py-16 text-center">
-	<h1 class="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
-		Find your people. Find their places.
-	</h1>
-	<p class="text-muted-foreground mx-auto mt-4 max-w-xl text-balance text-lg">
-		Bond cross-references taste so you can discover shops, bars, and restaurants picked by people
-		who actually share yours — wherever you happen to be.
-	</p>
-	<div class="mt-8 flex justify-center gap-3">
-		<Button href="/places" size="lg">
-			Start discovering
-			<ArrowRight class="size-4" />
-		</Button>
-		<Button href="/sign-up" variant="outline" size="lg">Create account</Button>
-	</div>
-</section>
+{#if !data.signedIn}
+	<!-- ─── Anonymous splash ─────────────────────────────────────────────── -->
+	<section class="py-16 text-center">
+		<h1 class="text-balance text-4xl font-semibold tracking-tight md:text-5xl">
+			Find your people. Find their places.
+		</h1>
+		<p class="text-muted-foreground mx-auto mt-4 max-w-xl text-balance text-lg">
+			Bond cross-references taste so you can discover shops, bars, and restaurants picked by people
+			who actually share yours — wherever you happen to be.
+		</p>
+		<div class="mt-8 flex justify-center gap-3">
+			<Button href="/sign-up" size="lg">
+				Create account
+				<ArrowRight class="size-4" />
+			</Button>
+			<Button href="/sign-in" variant="outline" size="lg">Sign in</Button>
+		</div>
+	</section>
 
-<section class="grid gap-6 py-12 md:grid-cols-2">
-	<div class="bg-card rounded-xl border p-6">
-		<Sparkles class="text-primary size-6" />
-		<h2 class="mt-3 text-lg font-medium">Recommendations that travel</h2>
-		<p class="text-muted-foreground mt-2 text-sm">
-			Love a few spots in LA? Land in Tokyo and Bond surfaces the places loved by the people who
-			agree with you in both cities.
-		</p>
+	<section class="grid gap-6 py-12 md:grid-cols-2">
+		<div class="bg-card rounded-xl border p-6">
+			<Sparkles class="text-primary size-6" />
+			<h2 class="mt-3 text-lg font-medium">Recommendations that travel</h2>
+			<p class="text-muted-foreground mt-2 text-sm">
+				Love a few spots in LA? Land in Tokyo and Bond surfaces the places loved by the people who
+				agree with you in both cities.
+			</p>
+		</div>
+		<div class="bg-card rounded-xl border p-6">
+			<Users class="text-primary size-6" />
+			<h2 class="mt-3 text-lg font-medium">Taste, not algorithms</h2>
+			<p class="text-muted-foreground mt-2 text-sm">
+				No engagement bait. Just the overlap between your likes and other humans' — turned into
+				recommendations you'd actually act on.
+			</p>
+		</div>
+	</section>
+{:else if !data.location}
+	<!-- ─── Signed-in but no location yet ─────────────────────────────────── -->
+	<div class="py-12">
+		<LocationPrompt />
 	</div>
-	<div class="bg-card rounded-xl border p-6">
-		<Users class="text-primary size-6" />
-		<h2 class="mt-3 text-lg font-medium">Taste, not algorithms</h2>
-		<p class="text-muted-foreground mt-2 text-sm">
-			No engagement bait. Just the overlap between your likes and other humans' — turned into
-			recommendations you'd actually act on.
-		</p>
-	</div>
-</section>
+{:else}
+	<!-- ─── Dashboard ─────────────────────────────────────────────────────── -->
+	<DashboardHeader location={data.location} weather={data.weather} />
+
+	<MatchedPeopleRail people={data.matchedPeople} city={data.location.city} />
+
+	<CategoryRail
+		title={data.myLikeCount > 0
+			? 'Restaurants you would love'
+			: `Popular restaurants in ${data.location.city}`}
+		places={data.restaurants}
+		empty={`No restaurants in ${data.location.city} yet.`}
+		showMatch={data.myLikeCount > 0}
+	/>
+
+	<CategoryRail
+		title={data.myLikeCount > 0 ? 'Bars you would love' : `Popular bars in ${data.location.city}`}
+		places={data.bars}
+		empty={`No bars in ${data.location.city} yet.`}
+		showMatch={data.myLikeCount > 0}
+	/>
+
+	<CategoryRail
+		title={data.myLikeCount > 0 ? 'Shops you would love' : `Popular shops in ${data.location.city}`}
+		places={data.shops}
+		empty={`No shops in ${data.location.city} yet.`}
+		showMatch={data.myLikeCount > 0}
+	/>
+
+	<EventsRail
+		title="Happening soon"
+		events={data.events}
+		timezone={data.location.timezone}
+		empty={`No upcoming events in ${data.location.city}.`}
+	/>
+{/if}
