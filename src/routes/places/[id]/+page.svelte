@@ -61,7 +61,10 @@
 			</header>
 			<div class="flex gap-3 overflow-x-auto pb-2">
 				{#each twins as person (person.id)}
-					<article class="bg-card flex w-44 shrink-0 flex-col gap-2 rounded-xl border p-4">
+					<a
+						href={`/users/${person.id}`}
+						class="bg-card hover:border-foreground/30 flex w-44 shrink-0 flex-col gap-2 rounded-xl border p-4 transition-colors"
+					>
 						<div
 							class="bg-muted flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium uppercase"
 						>
@@ -72,7 +75,7 @@
 							{person.sharedCount} shared like{person.sharedCount === 1 ? '' : 's'}
 						</div>
 						<div class="mt-1"><MatchBadge score={person.score} /></div>
-					</article>
+					</a>
 				{/each}
 			</div>
 		{:else if signedIn && data.likers.length > 0}
@@ -94,8 +97,9 @@
 		{#if others.length > 0}
 			<div class="mt-3 flex flex-wrap gap-2">
 				{#each others as person (person.id)}
-					<div
-						class="bg-card flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs"
+					<a
+						href={`/users/${person.id}`}
+						class="bg-card hover:border-foreground/30 flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition-colors"
 						title={person.name}
 					>
 						<div
@@ -104,7 +108,7 @@
 							{person.name.slice(0, 1)}
 						</div>
 						{person.name}
-					</div>
+					</a>
 				{/each}
 			</div>
 		{/if}

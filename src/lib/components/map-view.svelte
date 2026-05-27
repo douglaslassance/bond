@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { Place } from '$lib/server/db/schema';
 	import { categoryGlyphDataUri } from '$lib/map-glyphs';
+	import PlacePopup from './place-popup.svelte';
 
 	let {
 		places,
@@ -168,30 +169,6 @@
 	{/if}
 
 	{#if selectedPlace}
-		<div
-			class="bg-card pointer-events-auto absolute bottom-4 left-1/2 z-10 w-[min(28rem,calc(100vw-2rem))] -translate-x-1/2 rounded-xl border p-4 shadow-lg"
-		>
-			<div class="flex items-start justify-between gap-3">
-				<div>
-					<h3 class="text-sm font-semibold">
-						<a href={`/places/${selectedPlace.id}`} class="hover:underline">{selectedPlace.name}</a>
-					</h3>
-					<p class="text-muted-foreground mt-0.5 text-xs">
-						{selectedPlace.neighborhood
-							? `${selectedPlace.neighborhood}, ${selectedPlace.city}`
-							: selectedPlace.city}
-					</p>
-				</div>
-				<button
-					type="button"
-					class="text-muted-foreground hover:text-foreground text-xs"
-					onclick={() => (selectedPlace = null)}
-					aria-label="Close"
-				>
-					✕
-				</button>
-			</div>
-			<p class="text-muted-foreground mt-2 line-clamp-3 text-xs">{selectedPlace.description}</p>
-		</div>
+		<PlacePopup placeId={selectedPlace.id} onClose={() => (selectedPlace = null)} />
 	{/if}
 </div>

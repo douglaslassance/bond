@@ -26,9 +26,12 @@
 	{:else}
 		<div class="flex gap-3 overflow-x-auto pb-2">
 			{#each people as person (person.id)}
-				<article class="bg-card flex w-48 shrink-0 flex-col gap-2 rounded-xl border p-4">
+				<a
+					href={`/users/${person.id}`}
+					class="bg-card hover:border-foreground/30 flex w-48 shrink-0 flex-col gap-2 rounded-xl border p-4 transition-colors"
+				>
 					<div
-						class="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-sm font-medium uppercase"
+						class="bg-muted flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium uppercase"
 					>
 						{person.name.slice(0, 1)}
 					</div>
@@ -39,7 +42,7 @@
 					<div class="mt-1">
 						<MatchBadge score={person.score} />
 					</div>
-				</article>
+				</a>
 			{/each}
 		</div>
 	{/if}
